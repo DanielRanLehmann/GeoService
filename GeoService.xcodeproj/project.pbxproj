@@ -289,7 +289,10 @@
 			baseConfigurationReference = 30EC7576D436362DBA1B515C /* Pods-GeoService.debug.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 655US6229G;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lc++",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -300,7 +303,10 @@
 			baseConfigurationReference = 1667B5A0B4E4AADEF48C98F8 /* Pods-GeoService.release.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 655US6229G;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lc++",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
