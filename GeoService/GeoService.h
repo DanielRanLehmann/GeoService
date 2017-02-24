@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "Municipality.h"
-#import "MapKit/MapKit.h"
-#import "AFNetworking.h"
+#import <MapKit/MapKit.h>
+#import <AFNetworking/AFNetworking.h>
 
 @interface GeoService : NSObject
 

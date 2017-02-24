@@ -6,7 +6,7 @@
 //  Copyright © 2017 Daniel Ran Lehmann. All rights reserved.
 //
 
-#import "Mantle/Mantle.h"
+#import <Mantle/Mantle.h>
 
 @interface Municipality : MTLModel
 
