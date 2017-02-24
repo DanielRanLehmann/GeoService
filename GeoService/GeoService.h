@@ -7,7 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Municipality.h"
+#import <MapKit/MapKit.h>
+#import <AFNetworking.h>
 
 @interface GeoService : NSObject
+
++ (Municipality *)municipalityWithLocation:(CLLocationCoordinate2D)locationCoord;
 
 @end
