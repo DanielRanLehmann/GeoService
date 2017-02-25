@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "GeoService"
-  s.version      = "0.0.7"
+  s.version      = "0.0.8"
   s.summary      = "DISCLAIMER DO NOT USE YET, IT IS NOT READY."
 
   # This description is used to generate tags and improve search results.
@@ -134,5 +134,6 @@ Pod::Spec.new do |s|
   # s.dependency "JSONKit", "~> 1.4"
   s.dependency "AFNetworking"
   s.dependency "Mantle"
+  s.dependency "GeoJSONSerialization"
 
 end
