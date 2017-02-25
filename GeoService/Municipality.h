@@ -8,7 +8,7 @@
 
 #import <Mantle/Mantle.h>
 #import <MapKit/MapKit.h>
-#import "GeoJSONSerialization.h"
+#import <GeoJSONSerialization.h>
 
 @interface Municipality : MTLModel <MTLJSONSerializing>
 
