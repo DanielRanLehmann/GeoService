@@ -23,17 +23,34 @@
 // setters goes here for all readonly properties.
 
 + (NSValueTransformer *)JSONTransformerForKey:(NSString *)key {
-    if ([key isEqualToString:@"hrefUrl"] || [key isEqualToString:@"borderUrl"]) {
+    if ([key isEqualToString:@"hrefUrl"] || [key isEqualToString:@"border"]) {
         
-        if ([key isEqualToString:@"borderUrl"]) {
+        if ([key isEqualToString:@"border"]) {
             
             return [MTLValueTransformer transformerUsingReversibleBlock:^id(NSString *str, BOOL *success, NSError *__autoreleasing *error) {
                 if (success) {
-                    // try converting borderUrl --> to name of just 'border' and make it an MKShape.
-                    NSString *urlEncodedString  = [self urlencodeString:str];
-                    return [NSURL URLWithString:urlEncodedString];
+                    
+                    NSURL *URL = [NSURL URLWithString:str]; //[[NSBundle mainBundle] URLForResource:@"map" withExtension:@"geojson"];
+                    NSData *data = [NSData dataWithContentsOfURL:URL];
+                    NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+                    NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
+                    
+                    NSLog(@"shapes: %@", shapes);
+                    
+                    /*
+                    for (MKShape *shape in shapes) {
+                        if ([shape isKindOfClass:[MKPointAnnotation class]]) {
+                            [mapView addAnnotation:shape];
+                        } else if ([shape conformsToProtocol:@protocol(MKOverlay)]) {
+                            [mapView addOverlay:(id <MKOverlay>)shape];
+                        }
+                    }
+                    */
+                    
+                    return shapes[0];
+                    
                 }else{
-                    return @"";
+                    return nil;
                 }
                 
             }];
