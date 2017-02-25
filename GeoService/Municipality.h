@@ -8,11 +8,11 @@
 
 #import <Mantle/Mantle.h>
 
-@interface Municipality : MTLModel
+@interface Municipality : MTLModel <MTLJSONSerializing>
 
 @property (nonatomic, copy, readonly) NSURL *hrefUrl;
 @property (nonatomic, copy, readonly) NSString *identifier; // or uid
-@property (nonatomic, copy, readonly) NSURL *borderUrl;
+@property (nonatomic, copy, readonly) NSURL *border;
 @property (nonatomic, copy, readonly) NSString *name;
 @property (nonatomic, copy, readonly) NSString *area; // should be of different type?
 

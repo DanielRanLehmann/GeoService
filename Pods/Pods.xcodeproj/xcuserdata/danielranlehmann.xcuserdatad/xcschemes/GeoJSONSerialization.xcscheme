@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '0C00A9482445FCD8C0A8B340192E6D5F'
-               BlueprintName = 'Pods-GeoService'
+               BlueprintIdentifier = '272CC20A4D01BF5745BF3B5D72232181'
+               BlueprintName = 'GeoJSONSerialization'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libPods-GeoService.a'>
+               BuildableName = 'libGeoJSONSerialization.a'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

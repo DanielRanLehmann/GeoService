@@ -8,5 +8,6 @@ target 'GeoService' do
   # Pods for GeoService
   pod "Mantle"
   pod "AFNetworking"
+  pod "GeoJSONSerialization"
 
 end
