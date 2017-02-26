@@ -14,8 +14,7 @@
 
 @property (nonatomic, copy) NSURL *hrefUrl;
 @property (nonatomic, copy) NSString *identifier; // or uid
-//@property (nonatomic, copy, readonly) NSURL *border;
-@property (nonatomic, copy) MKShape *border;
+@property (nonatomic) NSArray *border;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *area; // should be of different type?
 
