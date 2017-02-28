@@ -193,6 +193,156 @@
     }];
 }
 
+/* POSTAL CODES METHODS */
++ (void)getPostcodesWithName:(NSString *)name completionHandler:(void (^)(NSError *error, NSArray <Postcode *> *postcodes))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"postnumre.json?q=%@", name] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            NSMutableArray <Postcode *> *postcodes = [NSMutableArray array];
+            for (NSDictionary *postcode in response) {
+                NSError *modelError = nil;
+                Postcode *_postcode = [MTLJSONAdapter modelOfClass:Municipality.class fromJSONDictionary:postcode error:&modelError];
+                if (!modelError) {
+                    [postcodes addObject:_postcode];
+                }
+            }
+            
+            handler(nil, postcodes);
+        }
+        
+        else {
+            handler(error, nil);
+        }
+        
+    }];
+}
+
++ (void)getPostcodesForMuncipalityWithId:(NSString *)muncipalityId completionHandler:(void (^)(NSError *error, NSArray <Postcode *> *postcodes))handler {
+    
+    [self requestWithPath:[NSString stringWithFormat:@"kommuner/%@/postnumre.json", muncipalityId] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            NSMutableArray <Postcode *> *postcodes = [NSMutableArray array];
+            for (NSDictionary *rawPostcode in response) {
+                [self getPostcodeWithId:rawPostcode[@"nr"] completionHandler:^(NSError *error, Postcode *postcode) {
+                    if (!error) {
+                        [postcodes addObject:postcode];
+                    }
+                }];
+            }
+            
+            handler(nil, postcodes);
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, Postcode *postcode))handler {
+    
+    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%@", postcodeId] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+        
+            NSError *modelError = nil;
+            Postcode *postcode = [MTLJSONAdapter modelOfClass:Postcode.class fromJSONDictionary:response error:&modelError];
+            if (!modelError) {
+                handler(nil, postcode);
+            }
+            
+            else {
+                handler(modelError, nil);
+            }
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getPostcodeWithLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate completionHandler:(void (^)(NSError *error, Postcode *postcode))handler {
+    
+    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%f,%f", locationCoordinate.latitude, locationCoordinate.longitude] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            NSError *modelError = nil;
+            Postcode *postcode = [MTLJSONAdapter modelOfClass:Postcode.class fromJSONDictionary:response error:&modelError];
+            if (!modelError) {
+                handler(nil, postcode);
+            }
+            
+            else {
+                handler(modelError, nil);
+            }
+            
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getBorderOfPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *errror, NSArray <MKPolygon *> *border))handler {
+    
+    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%@/graense.json", postcodeId] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            NSArray <MKPolygon *> *border = [NSArray array];
+            
+            NSMutableDictionary *templateGeoJSON = [NSMutableDictionary dictionaryWithDictionary:@{
+                                                                                                   @"type": @"FeatureCollection"
+                                                                                                   }];
+            
+            NSMutableDictionary *feature = [NSMutableDictionary dictionaryWithDictionary:@{
+                                                                                           @"type": @"Feature",
+                                                                                           @"properties": @{},
+                                                                                           }];
+            
+            NSDictionary *geoJSON = [NSDictionary dictionaryWithDictionary:response];
+            [feature setObject:geoJSON forKey:@"geometry"];
+            [templateGeoJSON setObject:@[feature] forKey:@"features"];
+            
+            NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:templateGeoJSON error:nil];
+            
+            if (shapes.count > 0) {
+                border = [NSArray arrayWithArray:shapes];
+            }
+            
+            handler(nil, border);
+            
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getNeighborsOfPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, NSArray <NSString *> *neighbors))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%@/naboer", postcodeId] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            NSArray *neighbors = [NSArray arrayWithArray:response];
+            
+            NSMutableArray <NSString *> *neighborIds = [NSMutableArray array];
+            
+            for (NSDictionary *neighbor in neighbors) {
+                [neighborIds addObject:neighbor[@"nr"]];
+            }
+            
+            handler(nil, neighborIds);
+        }
+        
+        else {
+            return handler(error, nil);
+        }
+    }];
+}
+
+
 @end
 
 @implementation NSValue (NSValueMapKitETRS89CoordinateExtension)

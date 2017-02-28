@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "Municipality.h"
+#import "Postcode.h"
+
 #import <MapKit/MapKit.h>
 #import <AFNetworking/AFNetworking.h>
 #import <GeoJSONSerialization/GeoJSONSerialization.h>
@@ -65,5 +67,19 @@ typedef enum : NSUInteger {
  @brief Returns a list of neighboring municipalities ids in regards to the id given.
  */
 + (void)getNeighborsOfMunicipalityWithId:(NSString *)municipalityId completionHandler:(void (^)(NSError *error, NSArray <NSString *> *neighbors))handler;
+
+/* POSTAL CODES METHODS */
+
++ (void)getPostcodesWithName:(NSString *)name completionHandler:(void (^)(NSError *error, NSArray <Postcode *> *postcodes))handler;
+
++ (void)getPostcodesForMuncipalityWithId:(NSString *)muncipalityId completionHandler:(void (^)(NSError *error, NSArray <Postcode *> *postcodes))handler;
+
++ (void)getPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, Postcode *postcode))handler;
+
++ (void)getPostcodeWithLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate completionHandler:(void (^)(NSError *error, Postcode *postcode))handler;
+
++ (void)getBorderOfPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *errror, NSArray <MKPolygon *> *border))handler;
+
++ (void)getNeighborsOfPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, NSArray <NSString *> *neighbors))handler;
 
 @end
