@@ -12,7 +12,6 @@
 
 + (NSDictionary *)JSONKeyPathsByPropertyKey {
     return @{
-             //@"hrefUrl" : @"href",
              @"regionId" : @"nr",
              @"name" : @"navn",
              @"area" : @"areal",
@@ -60,59 +59,42 @@
         }];
     }
     
-    else if ([key isEqualToString:@"hrefUrl"] || [key isEqualToString:@"border"]) {
-        
-        if ([key isEqualToString:@"border"]) {
-            return [MTLValueTransformer transformerUsingReversibleBlock:^id(NSString *str, BOOL *success, NSError *__autoreleasing *error) {
-                if (success) {
-                    
-                    NSArray *border = [NSArray array];
-                    
-                    NSURL *URL = [NSURL URLWithString:[str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
-                    NSData *data = [NSData dataWithContentsOfURL:URL];
-                    
-                    NSMutableDictionary *templateGeoJSON = [NSMutableDictionary dictionaryWithDictionary:@{
-                                                                                                           @"type": @"FeatureCollection"
-                                                                                                           }];
-                    
-                    NSMutableDictionary *feature = [NSMutableDictionary dictionaryWithDictionary:@{
-                                                                                                   @"type": @"Feature",
-                                                                                                   @"properties": @{},
-                                                                                                   }];
-                    
-                    NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-                    [feature setObject:geoJSON forKey:@"geometry"];
-                    [templateGeoJSON setObject:@[feature] forKey:@"features"];
-                    
-                    NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:templateGeoJSON error:nil];
-                    
-                    if (shapes.count > 0) {
-                        border = [NSArray arrayWithArray:shapes];
-                    }
-                    
-                    return border;
-                    
-                }else {
-                    return nil;
-                }
-            }];
-        }
-        
-        else {
-            //return [NSValueTransformer valueTransformerForName:MTLURLValueTransformerName];
-            return [MTLValueTransformer transformerUsingReversibleBlock:^id(NSString *str, BOOL *success, NSError *__autoreleasing *error) {
-                if (success) {
-                    NSString *urlEncodedString  = [self urlencodeString:str];
-                    return [NSURL URLWithString:urlEncodedString];
-                }else{
-                    return @"";
+    if ([key isEqualToString:@"border"]) {
+        return [MTLValueTransformer transformerUsingReversibleBlock:^id(NSString *str, BOOL *success, NSError *__autoreleasing *error) {
+            if (success) {
+                
+                NSArray *border = [NSArray array];
+                
+                NSURL *URL = [NSURL URLWithString:[str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
+                NSData *data = [NSData dataWithContentsOfURL:URL];
+                
+                NSMutableDictionary *templateGeoJSON = [NSMutableDictionary dictionaryWithDictionary:@{
+                                                                                                       @"type": @"FeatureCollection"
+                                                                                                       }];
+                
+                NSMutableDictionary *feature = [NSMutableDictionary dictionaryWithDictionary:@{
+                                                                                               @"type": @"Feature",
+                                                                                               @"properties": @{},
+                                                                                               }];
+                
+                NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+                [feature setObject:geoJSON forKey:@"geometry"];
+                [templateGeoJSON setObject:@[feature] forKey:@"features"];
+                
+                NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:templateGeoJSON error:nil];
+                
+                if (shapes.count > 0) {
+                    border = [NSArray arrayWithArray:shapes];
                 }
                 
-            }];
-        }
-        
+                return border;
+                
+            }else {
+                return nil;
+            }
+        }];
     }
-    
+
     return nil;
 }
 

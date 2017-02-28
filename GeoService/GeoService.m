@@ -86,7 +86,17 @@
     [self requestWithPath:[NSString stringWithFormat:@"/kommuner.json?q=%@", name] completionHandler:^(NSError *error, id response) {
         if (!error) {
             // do something here.
-            handler(nil, response);
+            
+            NSMutableArray <Municipality *> *municipalities = [NSMutableArray array];
+            for (NSDictionary *municipality in response) {
+                NSError *modelError = nil;
+                Municipality *_municipality = [MTLJSONAdapter modelOfClass:Municipality.class fromJSONDictionary:municipality error:&modelError];
+                if (!modelError) {
+                    [municipalities addObject:_municipality];
+                }
+            }
+            
+            handler(nil, municipalities);
         }
         
         else {
@@ -120,14 +130,23 @@
 
     [self requestWithPath:[NSString stringWithFormat:@"kommuner/%f,%f.json", locationCoordinate.latitude, locationCoordinate.longitude] completionHandler:^(NSError *error, id response) {
         if (!error) {
-            NSError *modelError = nil;
-            Municipality *municipality = [MTLJSONAdapter modelOfClass:Municipality.class fromJSONDictionary:response error:&modelError];
-            if (!error) {
-                handler(nil, municipality);
+            if (response[@"nr"]) {
+                [self getMunicipalityWithId:response[@"nr"] completionHandler:^(NSError *error, Municipality *municipality) {
+                    handler(error, municipality);
+                }];
                 
-            } else {
-                handler(modelError, nil);
+                /*
+                NSError *modelError = nil;
+                Municipality *municipality = [MTLJSONAdapter modelOfClass:Municipality.class fromJSONDictionary:response error:&modelError];
+                if (!error) {
+                    handler(nil, municipality);
+                    
+                } else {
+                    handler(modelError, nil);
+                }
+                */
             }
+            
         }
         
         else {
@@ -151,7 +170,7 @@
                                                                                            @"properties": @{},
                                                                                            }];
             
-            NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:response options:0 error:nil];
+            NSDictionary *geoJSON = [NSDictionary dictionaryWithDictionary:response];
             [feature setObject:geoJSON forKey:@"geometry"];
             [templateGeoJSON setObject:@[feature] forKey:@"features"];
             
@@ -191,46 +210,6 @@
             handler(error, nil);
         }
     }];
-}
-
-
-
-
-
-
-
-
-
-
-
-// deprecated method.
-
-+ (Municipality *)municipalityWithLocation:(CLLocationCoordinate2D)locationCoord {
-    
-    NSURL *baseUrl = [NSURL URLWithString:@"http://geo.oiorest.dk/"];
-    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithBaseURL:baseUrl];
-    [manager GET:[NSString stringWithFormat:@"kommuner/%f,%f.json", locationCoord.latitude, locationCoord.longitude] parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
-        NSLog(@"JSON: %@", responseObject);
-        NSMutableDictionary *jsonDict = [NSMutableDictionary dictionaryWithDictionary:responseObject];
-        NSLog(@"jsonDict: %@", jsonDict);
-        
-        //[jsonDict removeObjectsForKeys:@[@"areal", @"navn", @"nr", @"grænse"]];
-        
-        NSError *error = nil;
-        Municipality *municipality = [MTLJSONAdapter modelOfClass:Municipality.class fromJSONDictionary:jsonDict error:&error];
-        
-        NSLog(@"adapter error: %@", error);
-        NSLog(@"muni model:\n%@", municipality);
-        
-        //return municipality;
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-        
-        //return error;
-    }];
-    
-    return nil;
 }
 
 @end

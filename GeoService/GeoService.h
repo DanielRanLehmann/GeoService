@@ -33,9 +33,12 @@ ETRS89CoordinateMake(double latitude, double longitude) {
 
 typedef void(^municipalityCompletion)(NSError *error, Municipality *municipality);
 
+// Coordinate Transformation
 
 + (NSArray <id> *)convertCoordinates:(NSArray <id> *)coordinates fromSystem:(NSString *)fromSystem toSystem:(NSString *)toSystem;
+
 + (CLLocationCoordinate2D)locationCoordinateFromETRS89Coordinate:(ETRS89Coordinate)etrs89Coord;
+
 + (ETRS89Coordinate)etrs89CoordinateFromLocationCoordinate:(CLLocationCoordinate2D)wgs84Coord;
 
 

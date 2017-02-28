@@ -8,13 +8,14 @@
 
 #import <Mantle/Mantle.h>
 #import <GeoJSONSerialization/GeoJSONSerialization.h>
+#import <MapKit/MapKit.h>
 
-@interface Region : MTLModel
+@interface Region : MTLModel <MTLJSONSerializing> 
 
 @property (nonatomic, copy) NSString *regionId;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic) NSInteger area;
-@property (nonatomic) NSArray *border;
-@property (nonatomic) NSArray *neighbors; // a list of ids., this avoids recursion issues.
+@property (nonatomic) NSArray <MKPolygon *> *border;
+@property (nonatomic) NSArray <NSString *> *neighbors; // a list of ids., this avoids recursion issues.
 
 @end
