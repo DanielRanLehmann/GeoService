@@ -11,14 +11,36 @@
 
 @implementation GeoService
 
-+ (NSArray <id> *)convertCoordinates:(NSArray <id> *)coordinates fromSystem:(NSString *)fromSystem toSystem:(NSString *)toSystem {
++ (void)transformCoordinates:(NSArray *)coordinates toFormat:(GSCoordinateFormat)format completionHandler:(void (^)(NSError *error, NSArray *transformedCoordinates))handler {
     
     NSURLComponents *components = [[NSURLComponents alloc] init];
     components.scheme = @"http";
     components.host = @"geo.oiorest.dk";
     
     NSString *coordStr = [coordinates componentsJoinedByString:@","];
-    components.path = [NSString stringWithFormat:@"/%@.%@?%@=%@", toSystem, @"json", fromSystem, coordStr];
+    
+    NSString *toFormat;
+    NSString *fromFormat;
+    
+    switch (format) {
+        case GSCoordinateFormatETRS89:
+        {
+            toFormat = @"etrs89";
+            fromFormat = @"wgs84";
+        }
+            break;
+            
+        case GSCoordinateFormatWGS84:
+        {
+            toFormat = @"wgs84";
+            fromFormat = @"etrs89";
+        }
+            
+        default:
+            break;
+    }
+
+    components.path = [NSString stringWithFormat:@"/%@.%@?%@=%@", toFormat, @"json", fromFormat, coordStr];
     
     NSURL *url = [NSURL URLWithString:[components.URL.absoluteString stringByRemovingPercentEncoding]];
     
@@ -29,40 +51,13 @@
     NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
     if (!error && ([[json valueForKey:@"type"] isEqualToString:@"MultiPoint"] && [[json valueForKey:@"coordinates"] count] == (coordinates.count / 2))) {
         
-        // check for type in (geo)json
-        NSArray *array = [json valueForKey:@"coordinates"]; // array has depth >= 1
-        return array; //locationCoord = CLLocationCoordinate2DMake([array[0][0] doubleValue], [array[0][1] doubleValue]); //ETRS89CoordinateMake([array[0][0] doubleValue], [array[0][1] doubleValue]);
+        NSArray *transformedCoords = [json valueForKey:@"coordinates"]; // array has depth >= 1
+        return handler(nil, transformedCoords);
     }
     
-    return @[];
-}
-
-+ (CLLocationCoordinate2D)locationCoordinateFromETRS89Coordinate:(ETRS89Coordinate)etrs89Coord {
-    
-    CLLocationCoordinate2D locationCoord = CLLocationCoordinate2DMake(0, 0);
-    
-    // check for type in (geo)json
-    NSArray *array = [self convertCoordinates:@[@(etrs89Coord.latitude), @(etrs89Coord.longitude)] fromSystem:@"etrs89" toSystem:@"wgs84"]; // array has depth >= 1
-    if ([array[0] count] == 2) {
-        locationCoord = CLLocationCoordinate2DMake([array[0][0] doubleValue], [array[0][1] doubleValue]); //ETRS89CoordinateMake([array[0][0] doubleValue], [array[0][1] doubleValue]);
+    else {
+        return handler(error, nil);
     }
-    
-    return locationCoord;
-}
-
-// doesn't quiet work yet.
-+ (ETRS89Coordinate)etrs89CoordinateFromLocationCoordinate:(CLLocationCoordinate2D)wgs84Coord {
-    
-    // sync method. User can call it in an async block though.
-    ETRS89Coordinate etrs89Coord = ETRS89CoordinateMake(0, 0);
-    
-    // check for type in (geo)json
-    NSArray *array = [self convertCoordinates:@[@(etrs89Coord.latitude), @(etrs89Coord.longitude)] fromSystem:@"wgs84" toSystem:@"etrs89"]; // array has depth >= 1
-    if ([array[0] count] == 2) {
-        etrs89Coord = ETRS89CoordinateMake([array[0][0] doubleValue], [array[0][1] doubleValue]); //ETRS89CoordinateMake([array[0][0] doubleValue], [array[0][1] doubleValue]);
-    }
-    
-    return etrs89Coord;
 }
 
 + (void)requestWithPath:(NSString *)requestPath completionHandler:(void (^)(NSError *error, id response))handler {
@@ -130,23 +125,9 @@
 
     [self requestWithPath:[NSString stringWithFormat:@"kommuner/%f,%f.json", locationCoordinate.latitude, locationCoordinate.longitude] completionHandler:^(NSError *error, id response) {
         if (!error) {
-            if (response[@"nr"]) {
-                [self getMunicipalityWithId:response[@"nr"] completionHandler:^(NSError *error, Municipality *municipality) {
-                    handler(error, municipality);
-                }];
-                
-                /*
-                NSError *modelError = nil;
-                Municipality *municipality = [MTLJSONAdapter modelOfClass:Municipality.class fromJSONDictionary:response error:&modelError];
-                if (!error) {
-                    handler(nil, municipality);
-                    
-                } else {
-                    handler(modelError, nil);
-                }
-                */
-            }
-            
+            [self getMunicipalityWithId:response[@"nr"] completionHandler:^(NSError *error, Municipality *municipality) {
+                handler(error, municipality);
+            }];
         }
         
         else {

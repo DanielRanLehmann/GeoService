@@ -13,34 +13,31 @@
 #import <GeoJSONSerialization/GeoJSONSerialization.h>
 
 struct ETRS89Coordinate {
-    
-    double latitude;
-    double longitude;
+    double north;
+    double east;
 };
 typedef struct ETRS89Coordinate ETRS89Coordinate;
 
 CG_INLINE ETRS89Coordinate
-ETRS89CoordinateMake(double latitude, double longitude) {
+ETRS89CoordinateMake(double north, double east) {
     
     ETRS89Coordinate coordinate;
-    coordinate.latitude = latitude;
-    coordinate.longitude = longitude;
+    coordinate.north = north;
+    coordinate.east = east;
     
     return coordinate;
 }
 
-@interface GeoService : NSObject
+typedef enum : NSUInteger {
+    GSCoordinateFormatETRS89,
+    GSCoordinateFormatWGS84
+} GSCoordinateFormat;
 
-typedef void(^municipalityCompletion)(NSError *error, Municipality *municipality);
+@interface GeoService : NSObject
 
 // Coordinate Transformation
 
-+ (NSArray <id> *)convertCoordinates:(NSArray <id> *)coordinates fromSystem:(NSString *)fromSystem toSystem:(NSString *)toSystem;
-
-+ (CLLocationCoordinate2D)locationCoordinateFromETRS89Coordinate:(ETRS89Coordinate)etrs89Coord;
-
-+ (ETRS89Coordinate)etrs89CoordinateFromLocationCoordinate:(CLLocationCoordinate2D)wgs84Coord;
-
++ (void)transformCoordinates:(NSArray *)coordinates toFormat:(GSCoordinateFormat)format completionHandler:(void (^)(NSError *error, NSArray *transformedCoordinates))handler;
 
 // Municipality Methods.
 
