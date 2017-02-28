@@ -39,7 +39,7 @@
         default:
             break;
     }
-
+    
     components.path = [NSString stringWithFormat:@"/%@.%@?%@=%@", toFormat, @"json", fromFormat, coordStr];
     
     NSURL *url = [NSURL URLWithString:[components.URL.absoluteString stringByRemovingPercentEncoding]];
@@ -77,7 +77,7 @@
 
 // MUNICIPALITY WORK.
 + (void)getMunicipalitiesWithName:(NSString *)name completionHandler:(void (^)(NSError *error, NSArray <Municipality *> *municipalities))handler {
-
+    
     [self requestWithPath:[NSString stringWithFormat:@"/kommuner.json?q=%@", name] completionHandler:^(NSError *error, id response) {
         if (!error) {
             // do something here.
@@ -109,7 +109,7 @@
             Municipality *municipality = [MTLJSONAdapter modelOfClass:Municipality.class fromJSONDictionary:response error:&modelError];
             if (!error) {
                 handler(nil, municipality);
-            
+                
             } else {
                 handler(modelError, nil);
             }
@@ -122,7 +122,7 @@
 }
 
 + (void)getMunicipalityWithLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate completionHandler:(void (^)(NSError *error, Municipality *municipality))handler {
-
+    
     [self requestWithPath:[NSString stringWithFormat:@"kommuner/%f,%f.json", locationCoordinate.latitude, locationCoordinate.longitude] completionHandler:^(NSError *error, id response) {
         if (!error) {
             [self getMunicipalityWithId:response[@"nr"] completionHandler:^(NSError *error, Municipality *municipality) {
@@ -162,7 +162,7 @@
             }
             
             handler(nil, border);
-
+            
         }
         
         else {
@@ -172,7 +172,7 @@
 }
 
 + (void)getNeighborsOfMunicipalityWithId:(NSString *)municipalityId completionHandler:(void (^)(NSError *error, NSArray <NSString *> *neighbors))handler {
-
+    
     [self requestWithPath:[NSString stringWithFormat:@"kommuner/%@/naboer.json", municipalityId] completionHandler:^(NSError *error, id response) {
         if (!error) {
             
@@ -195,14 +195,14 @@
 
 /* POSTAL CODES METHODS */
 + (void)getPostcodesWithName:(NSString *)name completionHandler:(void (^)(NSError *error, NSArray <Postcode *> *postcodes))handler {
-
-    [self requestWithPath:[NSString stringWithFormat:@"postnumre.json?q=%@", name] completionHandler:^(NSError *error, id response) {
+    
+    [self requestWithPath:[NSString stringWithFormat:@"postnumre.json?q=%@", [name stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]] completionHandler:^(NSError *error, id response) {
         if (!error) {
             
             NSMutableArray <Postcode *> *postcodes = [NSMutableArray array];
             for (NSDictionary *postcode in response) {
                 NSError *modelError = nil;
-                Postcode *_postcode = [MTLJSONAdapter modelOfClass:Municipality.class fromJSONDictionary:postcode error:&modelError];
+                Postcode *_postcode = [MTLJSONAdapter modelOfClass:Postcode.class fromJSONDictionary:postcode error:&modelError];
                 if (!modelError) {
                     [postcodes addObject:_postcode];
                 }
@@ -243,9 +243,9 @@
 
 + (void)getPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, Postcode *postcode))handler {
     
-    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%@", postcodeId] completionHandler:^(NSError *error, id response) {
+    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%@.json", postcodeId] completionHandler:^(NSError *error, id response) {
         if (!error) {
-        
+            
             NSError *modelError = nil;
             Postcode *postcode = [MTLJSONAdapter modelOfClass:Postcode.class fromJSONDictionary:response error:&modelError];
             if (!modelError) {
@@ -265,7 +265,7 @@
 
 + (void)getPostcodeWithLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate completionHandler:(void (^)(NSError *error, Postcode *postcode))handler {
     
-    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%f,%f", locationCoordinate.latitude, locationCoordinate.longitude] completionHandler:^(NSError *error, id response) {
+    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%f,%f.json", locationCoordinate.latitude, locationCoordinate.longitude] completionHandler:^(NSError *error, id response) {
         if (!error) {
             
             NSError *modelError = nil;
@@ -322,8 +322,8 @@
 }
 
 + (void)getNeighborsOfPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, NSArray <NSString *> *neighbors))handler {
-
-    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%@/naboer", postcodeId] completionHandler:^(NSError *error, id response) {
+    
+    [self requestWithPath:[NSString stringWithFormat:@"postnumre/%@/naboer.json", postcodeId] completionHandler:^(NSError *error, id response) {
         if (!error) {
             NSArray *neighbors = [NSArray arrayWithArray:response];
             
@@ -343,6 +343,131 @@
 }
 
 
++ (void)getPoliceDistrictWithName:(NSString *)name completionHandler:(void (^)(NSError *error, NSArray <PoliceDistrict *> *policeDistricts))handler {
+    
+    [self requestWithPath:[NSString stringWithFormat:@"politikredse.json?q=%@", [name stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            NSMutableArray <PoliceDistrict *> *policeDistricts = [NSMutableArray array];
+            for (NSDictionary *policeDistrict in response) {
+                NSError *modelError = nil;
+                PoliceDistrict *_policeDistrict = [MTLJSONAdapter modelOfClass:PoliceDistrict.class fromJSONDictionary:policeDistrict error:&modelError];
+                if (!modelError) {
+                    [policeDistricts addObject:_policeDistrict];
+                }
+            }
+            
+            handler(nil, policeDistricts);
+        }
+        
+        else {
+            handler(error, nil);
+        }
+        
+    }];
+}
+
++ (void)getPoliceDistrictWithId:(NSString *)policeDistrictId completionHandler:(void (^)(NSError *error, PoliceDistrict *policeDistrict))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"politikredse/%@.json", policeDistrictId] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            NSError *modelError = nil;
+            PoliceDistrict *policeDistrict = [MTLJSONAdapter modelOfClass:PoliceDistrict.class fromJSONDictionary:response error:&modelError];
+            if (!modelError) {
+                handler(nil, policeDistrict);
+            }
+            
+            else {
+                handler(modelError, nil);
+            }
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getPoliceDistrictWithLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate completionHandler:(void (^)(NSError *error, PoliceDistrict *policeDistrict))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"politikredse/%f,%f.json", locationCoordinate.latitude, locationCoordinate.longitude] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            NSError *modelError = nil;
+            PoliceDistrict *policeDistrict = [MTLJSONAdapter modelOfClass:PoliceDistrict.class fromJSONDictionary:response error:&modelError];
+            if (!modelError) {
+                handler(nil, policeDistrict);
+            }
+            
+            else {
+                handler(modelError, nil);
+            }
+            
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getBorderOfPoliceDistrictWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *errror, NSArray <MKPolygon *> *border))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"politikredse/%@/graense.json", postcodeId] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            NSArray <MKPolygon *> *border = [NSArray array];
+            
+            NSMutableDictionary *templateGeoJSON = [NSMutableDictionary dictionaryWithDictionary:@{
+                                                                                                   @"type": @"FeatureCollection"
+                                                                                                   }];
+            
+            NSMutableDictionary *feature = [NSMutableDictionary dictionaryWithDictionary:@{
+                                                                                           @"type": @"Feature",
+                                                                                           @"properties": @{},
+                                                                                           }];
+            
+            NSDictionary *geoJSON = [NSDictionary dictionaryWithDictionary:response];
+            [feature setObject:geoJSON forKey:@"geometry"];
+            [templateGeoJSON setObject:@[feature] forKey:@"features"];
+            
+            NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:templateGeoJSON error:nil];
+            
+            if (shapes.count > 0) {
+                border = [NSArray arrayWithArray:shapes];
+            }
+            
+            handler(nil, border);
+            
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getNeighborsOfPoliceDistrictWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, NSArray <NSString *> *neighbors))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"politikredse/%@/naboer.json", postcodeId] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            NSArray *neighbors = [NSArray arrayWithArray:response];
+            
+            NSMutableArray <NSString *> *neighborIds = [NSMutableArray array];
+            
+            for (NSDictionary *neighbor in neighbors) {
+                [neighborIds addObject:neighbor[@"nr"]];
+            }
+            
+            handler(nil, neighborIds);
+        }
+        
+        else {
+            return handler(error, nil);
+        }
+    }];
+}
+ 
 @end
 
 @implementation NSValue (NSValueMapKitETRS89CoordinateExtension)

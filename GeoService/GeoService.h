@@ -7,9 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+
+// MODELS
 #import "Municipality.h"
 #import "Postcode.h"
+#import "PoliceDistrict.h"
 
+// USING THESE LIBS.
 #import <MapKit/MapKit.h>
 #import <AFNetworking/AFNetworking.h>
 #import <GeoJSONSerialization/GeoJSONSerialization.h>
@@ -81,5 +85,18 @@ typedef enum : NSUInteger {
 + (void)getBorderOfPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *errror, NSArray <MKPolygon *> *border))handler;
 
 + (void)getNeighborsOfPostcodeWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, NSArray <NSString *> *neighbors))handler;
+
+/* POLICE DISTRICT */
++ (void)getPoliceDistrictWithName:(NSString *)name completionHandler:(void (^)(NSError *error, NSArray <PoliceDistrict *> *policeDistricts))handler;
+
++ (void)getPoliceDistrictWithId:(NSString *)policeDistrictId completionHandler:(void (^)(NSError *error, PoliceDistrict *policeDistrict))handler;
+
++ (void)getPoliceDistrictWithLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate completionHandler:(void (^)(NSError *error, PoliceDistrict *policeDistrict))handler;
+
++ (void)getBorderOfPoliceDistrictWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *errror, NSArray <MKPolygon *> *border))handler;
+
++ (void)getNeighborsOfPoliceDistrictWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, NSArray <NSString *> *neighbors))handler;
+
+
 
 @end

@@ -12,6 +12,7 @@
 		3527FAF91E608D2F0092241F /* GeoService.m in Sources */ = {isa = PBXBuildFile; fileRef = 3527FAF81E608D2F0092241F /* GeoService.m */; };
 		3527FAFA1E608D2F0092241F /* GeoService.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3527FAF71E608D2F0092241F /* GeoService.h */; };
 		353FE55F1E65CE500001292D /* Postcode.m in Sources */ = {isa = PBXBuildFile; fileRef = 353FE55E1E65CE500001292D /* Postcode.m */; };
+		35E3173F1E65DB64004A8F9D /* PoliceDistrict.m in Sources */ = {isa = PBXBuildFile; fileRef = 35E3173E1E65DB64004A8F9D /* PoliceDistrict.m */; };
 		8874FDC813D240F077A9526C /* libPods-GeoService.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD2096A083871EF53DFED7F8 /* libPods-GeoService.a */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,8 @@
 		3527FAF81E608D2F0092241F /* GeoService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GeoService.m; sourceTree = "<group>"; };
 		353FE55D1E65CE500001292D /* Postcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Postcode.h; sourceTree = "<group>"; };
 		353FE55E1E65CE500001292D /* Postcode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Postcode.m; sourceTree = "<group>"; };
+		35E3173D1E65DB64004A8F9D /* PoliceDistrict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoliceDistrict.h; sourceTree = "<group>"; };
+		35E3173E1E65DB64004A8F9D /* PoliceDistrict.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PoliceDistrict.m; sourceTree = "<group>"; };
 		CD2096A083871EF53DFED7F8 /* libPods-GeoService.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GeoService.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -93,6 +96,8 @@
 				350863BA1E619FFE001DC3F9 /* Region.m */,
 				353FE55D1E65CE500001292D /* Postcode.h */,
 				353FE55E1E65CE500001292D /* Postcode.m */,
+				35E3173D1E65DB64004A8F9D /* PoliceDistrict.h */,
+				35E3173E1E65DB64004A8F9D /* PoliceDistrict.m */,
 			);
 			path = GeoService;
 			sourceTree = "<group>";
@@ -200,6 +205,7 @@
 			files = (
 				350863BB1E619FFE001DC3F9 /* Region.m in Sources */,
 				3527FAF91E608D2F0092241F /* GeoService.m in Sources */,
+				35E3173F1E65DB64004A8F9D /* PoliceDistrict.m in Sources */,
 				353FE55F1E65CE500001292D /* Postcode.m in Sources */,
 				3504EF581E608E67005C0360 /* Municipality.m in Sources */,
 			);
