@@ -467,7 +467,191 @@
         }
     }];
 }
- 
+
+/* antennas */
++ (void)getAllTechnologiesWithCompletionHandler:(void (^)(NSError *error, NSArray <Technology *> *technologies))handler {
+
+    [self requestWithPath:@"antenner/teknologier.json" completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            NSMutableArray <Technology *> *technologies = [NSMutableArray array];
+            for (NSDictionary *technologyDict in response) {
+                NSError *modelError = nil;
+                Technology *technology = [MTLJSONAdapter modelOfClass:Technology.class fromJSONDictionary:technologyDict error:&modelError];
+                if (!modelError) {
+                    [technologies addObject:technology];
+                }
+            }
+            
+            handler(nil, technologies);
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getAllServiceTypesWithCompletionHandler:(void (^)(NSError *error, NSArray <ServiceType *> *serviceTypes))handler {
+   
+    [self requestWithPath:@"antenner/tjenester.json" completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            NSMutableArray <ServiceType *> *serviceTypes = [NSMutableArray array];
+            for (NSDictionary *serviceTypeDict in response) {
+                NSError *modelError = nil;
+                ServiceType *serviceType = [MTLJSONAdapter modelOfClass:ServiceType.class fromJSONDictionary:serviceTypeDict error:&modelError];
+                if (!modelError) {
+                    [serviceTypes addObject:serviceType];
+                }
+            }
+            
+            handler(nil, serviceTypes);
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getAntennasWithinRadius:(NSUInteger)radius ofLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate serviceTypeName:(nullable NSString *)serviceTypeName technologyName:(nullable NSString *)technologyName completionHandler:(void (^)(NSError *_Nullable error, NSArray <Antenna *> * _Nullable antennas))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"antenner/%f,%f,%lu?tjenesteart=%@&teknologi=%@.json", locationCoordinate.latitude, locationCoordinate.longitude, radius, serviceTypeName, technologyName] completionHandler:^(NSError *error, id response) {
+        
+        if (!error) {
+            NSMutableArray <Antenna *> *antennas = [NSMutableArray array];
+            for (NSDictionary *antennaDict in response) {
+                NSError *modelError = nil;
+                Antenna *antenna = [MTLJSONAdapter modelOfClass:Antenna.class fromJSONDictionary:antennaDict error:&modelError];
+                if (!modelError) {
+                    [antennas addObject:antenna];
+                }
+            }
+            
+            handler(nil, antennas);
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getNearestAntennaWithLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate serviceTypeName:(nullable NSString *)serviceTypeName technologyName:(nullable NSString *)technologyName completionHandler:(void (^)(NSError *error, Antenna *antenna))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"antenner/%f,%f?tjenesteart=%@&teknologi=%@.json", locationCoordinate.latitude, locationCoordinate.longitude, serviceTypeName, technologyName] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            NSError *modelError = nil;
+            Antenna *antenna = [MTLJSONAdapter modelOfClass:Antenna.class fromJSONDictionary:response error:&modelError];
+            if (!modelError) {
+                handler(nil, antenna);
+            } else {
+                handler(modelError, nil);
+            }
+            
+        } else {
+            handler(error, nil);
+        }
+    }];
+}
+
+
++ (void)getAntennasWithPostcode:(NSUInteger)postcode muncipalityId:(NSString *)muncipalityId serviceType:(NSString *)serviceType technology:(NSString *)technology maxCount:(NSUInteger)maxCount completionHandler:(void (^)(NSError *error, NSArray <Antenna *> *antennas))handler {
+    
+    [self requestWithPath:[NSString stringWithFormat:@"antenner.json?postnr=%lu&kommunekode=%@&tjenesteart=%@&teknologi=%@&maxantal=%lu", postcode, muncipalityId, serviceType, technology, maxCount] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            NSMutableArray <Antenna *> *antennas = [NSMutableArray array];
+            for (NSDictionary *antennaDict in response) {
+                NSError *modelError = nil;
+                Antenna *antenna = [MTLJSONAdapter modelOfClass:Antenna.class fromJSONDictionary:antennaDict error:&modelError];
+                if (!modelError) {
+                    [antennas addObject:antenna];
+                }
+            }
+            
+            handler(nil, antennas);
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getAntennasWithBBox:(BBox)bbox serviceTypeName:(nullable NSString *)serviceTypeName technologyName:(nullable NSString *)technologyName completionHandler:(void (^)(NSError *error, NSArray <Antenna *> *antennas))handler {
+    
+    [self requestWithPath:[NSString stringWithFormat:@"antenner/%f,%f;%f,%f?tjenesteart=%@&teknologi=%@.json", bbox.southWest.latitude, bbox.southWest.longitude, bbox.northEast.latitude, bbox.northEast.longitude, serviceTypeName, technologyName] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            NSMutableArray <Antenna *> *antennas = [NSMutableArray array];
+            for (NSDictionary *antennaDict in response) {
+                NSError *modelError = nil;
+                Antenna *antenna = [MTLJSONAdapter modelOfClass:Antenna.class fromJSONDictionary:antennaDict error:&modelError];
+                if (!modelError) {
+                    [antennas addObject:antenna];
+                }
+            }
+            
+            handler(nil, antennas);
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
+// ROADS
+
++ (void)getRoadsWithName:(nonnull NSString *)roadName postcode:(NSUInteger)postcode fromPostcode:(NSUInteger)fromPostcode toPostcode:(NSUInteger)toPostcode muncipalityId:(nullable NSString *)muncipalityId roadId:(nullable NSString *)roadId maxCount:(NSUInteger)maxCount completionHandler:(void (^)(NSError *error, NSArray <Road *> *roads))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"vejnavne.json?postnr=%lu&frapostnr=%lu&tilpostnr=%lu&kommunekode=%@&vejnavn=%@&vejkode=%@&maxantal=%lu", postcode, fromPostcode, toPostcode, muncipalityId, roadName, roadId, maxCount] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            NSMutableArray <Road *> *roads = [NSMutableArray array];
+            
+            for (NSDictionary *rawRoad in response) {
+                NSError *modelError = nil;
+                Road *road = [MTLJSONAdapter modelOfClass:Road.class fromJSONDictionary:rawRoad error:&modelError];
+                if (!modelError) {
+                    [roads addObject:road];
+                }
+            }
+            
+            handler(nil, roads);
+            
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
++ (void)getRoadWithId:(nonnull NSString *)roadId muncipalityId:(nullable NSString *)muncipalityId completionHandler:(void (^)(NSError *error, Road *road))handler {
+
+    [self requestWithPath:[NSString stringWithFormat:@"kommuner.json/%@/vejnavne/%@", muncipalityId, roadId] completionHandler:^(NSError *error, id response) {
+        if (!error) {
+            
+            // handler goes here.
+            NSError *modelError = nil;
+            Road *road = [MTLJSONAdapter modelOfClass:Road.class fromJSONDictionary:response error:&modelError];
+            if (!modelError) {
+                handler(nil, road);
+            }
+            
+            else {
+                handler(modelError, nil);
+            }
+
+        }
+        
+        else {
+            handler(error, nil);
+        }
+    }];
+}
+
 @end
 
 @implementation NSValue (NSValueMapKitETRS89CoordinateExtension)

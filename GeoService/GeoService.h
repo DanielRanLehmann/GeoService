@@ -12,12 +12,45 @@
 #import "Municipality.h"
 #import "Postcode.h"
 #import "PoliceDistrict.h"
+#import "Antenna.h"
+#import "Road.h"
 
 // USING THESE LIBS.
 #import <MapKit/MapKit.h>
 #import <AFNetworking/AFNetworking.h>
 #import <GeoJSONSerialization/GeoJSONSerialization.h>
 
+/*
+struct SouthWest {
+    double latitude;
+    double longitude;
+};
+typedef struct SouthWest SouthWest;
+
+struct NorthEast {
+    double latitude;
+    double longitude;
+};
+typedef struct NorthEast NorthEast;
+*/
+
+struct BBox {
+    CLLocationCoordinate2D southWest;
+    CLLocationCoordinate2D northEast;
+};
+typedef struct BBox BBox;
+
+CG_INLINE BBox
+BBoxMake(CLLocationCoordinate2D southWest, CLLocationCoordinate2D northEast) {
+    
+    BBox box;
+    box.southWest = southWest;
+    box.northEast = northEast;
+    
+    return box;
+}
+
+// maybe switch north and east position?
 struct ETRS89Coordinate {
     double north;
     double east;
@@ -38,6 +71,8 @@ typedef enum : NSUInteger {
     GSCoordinateFormatETRS89,
     GSCoordinateFormatWGS84
 } GSCoordinateFormat;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface GeoService : NSObject
 
@@ -97,6 +132,44 @@ typedef enum : NSUInteger {
 
 + (void)getNeighborsOfPoliceDistrictWithId:(NSString *)postcodeId completionHandler:(void (^)(NSError *error, NSArray <NSString *> *neighbors))handler;
 
+/* antennas */
++ (void)getAllTechnologiesWithCompletionHandler:(void (^)(NSError *error, NSArray <Technology *> *technologies))handler;
+
++ (void)getAllServiceTypesWithCompletionHandler:(void (^)(NSError *error, NSArray <ServiceType *> *serviceTypes))handler;
+
++ (void)getAntennasWithinRadius:(NSUInteger)radius ofLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate serviceTypeName:(nullable NSString *)serviceTypeName technologyName:(nullable NSString *)technologyName completionHandler:(void (^)(NSError *_Nullable error, NSArray <Antenna *> * _Nullable antennas))handler;
+
++ (void)getAntennasWithBBox:(BBox)bbox serviceTypeName:(nullable NSString *)serviceTypeName technologyName:(nullable NSString *)technologyName completionHandler:(void (^)(NSError *error, NSArray <Antenna *> *antennas))handler;
+
++ (void)getNearestAntennaWithLocationCoordinate:(CLLocationCoordinate2D)locationCoordinate serviceTypeName:(nullable NSString *)serviceTypeName technologyName:(nullable NSString *)technologyName completionHandler:(void (^)(NSError *error, Antenna *antenna))handler;
+
++ (void)getAntennasWithPostcode:(NSUInteger)postcode muncipalityId:(nullable NSString *)muncipalityId serviceType:(nullable NSString *)serviceType technology:(nullable NSString *)technology maxCount:(NSUInteger)maxCount completionHandler:(void (^)(NSError *error, NSArray <Antenna *> *antennas))handler;
+
+// ROADS
+
+// simple search for road name
++ (void)getRoadsWithName:(nonnull NSString *)roadName maxCount:(NSUInteger)maxCount completionHandler:(void (^)(NSError *error, NSArray <Road *> *roads))handler;
+
+// more attri search for road name.
++ (void)getRoadsWithName:(nonnull NSString *)roadName postcode:(NSUInteger)postcode fromPostcode:(NSUInteger)fromPostcode toPostcode:(NSUInteger)toPostcode muncipalityId:(nullable NSString *)muncipalityId roadId:(nullable NSString *)roadId maxCount:(NSUInteger)maxCount completionHandler:(void (^)(NSError *error, NSArray <Road *> *roads))handler;
+
++ (void)getRoadWithId:(nonnull NSString *)roadId muncipalityId:(nullable NSString *)muncipalityId completionHandler:(void (^)(NSError *error, Road *road))handler;
+
+// LANDLOT (TWO WORDS)
+
++ (void)getLandLotWithName:(nonnull NSString *)landLotName landlotId:(nullable NSString *)landlotId municipalityId:(nullable NSString *)municipalityId regionId:(nullable NSString *)regionId maxCount:(NSUInteger)maxCount;
+
++ (void)getLandLotWithId:(nonnull NSString *)landLotId municipalityId:(nullable NSString *)municipalityId;
 
 
 @end
+
+@interface NSValue (NSValueMapKitETRS89CoordinateExtension)
+
++ (NSValue *)valueWithETRS89Coordinate:(ETRS89Coordinate)coordinate;
+- (ETRS89Coordinate)ETRS89CoordinateValue;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
