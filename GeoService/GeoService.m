@@ -17,7 +17,23 @@
     components.scheme = @"http";
     components.host = @"geo.oiorest.dk";
     
-    NSString *coordStr = [coordinates componentsJoinedByString:@","];
+    NSMutableString *coordStr = [NSMutableString string];
+    if (coordinates.count > 2 && coordinates.count % 2 == 0) {
+        for (int i = 0; i < coordinates.count; i+=2) {
+            NSMutableArray *subset = [NSMutableArray array];
+            [subset addObject:coordinates[i]];
+            [subset addObject:coordinates[i+1]];
+            [coordStr appendString:[subset componentsJoinedByString:@","]];
+            if (i < coordinates.count - 2) {
+                [coordStr appendString:@";"];
+            }
+            
+        }
+    }
+    
+    else {
+        coordStr = [coordinates componentsJoinedByString:@","];
+    }
     
     NSString *toFormat;
     NSString *fromFormat;

@@ -12,6 +12,7 @@
 		3527FAF91E608D2F0092241F /* GeoService.m in Sources */ = {isa = PBXBuildFile; fileRef = 3527FAF81E608D2F0092241F /* GeoService.m */; };
 		3527FAFA1E608D2F0092241F /* GeoService.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3527FAF71E608D2F0092241F /* GeoService.h */; };
 		353FE55F1E65CE500001292D /* Postcode.m in Sources */ = {isa = PBXBuildFile; fileRef = 353FE55E1E65CE500001292D /* Postcode.m */; };
+		35ACD0121E8C183700546EA7 /* GeoserviceV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 35ACD0111E8C183700546EA7 /* GeoserviceV2.m */; };
 		35D9DD561E675BDB007E0ADA /* Antenna.m in Sources */ = {isa = PBXBuildFile; fileRef = 35D9DD551E675BDB007E0ADA /* Antenna.m */; };
 		35D9DD591E675EC9007E0ADA /* Road.m in Sources */ = {isa = PBXBuildFile; fileRef = 35D9DD581E675EC9007E0ADA /* Road.m */; };
 		35E3173F1E65DB64004A8F9D /* PoliceDistrict.m in Sources */ = {isa = PBXBuildFile; fileRef = 35E3173E1E65DB64004A8F9D /* PoliceDistrict.m */; };
@@ -43,6 +44,8 @@
 		3527FAF81E608D2F0092241F /* GeoService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GeoService.m; sourceTree = "<group>"; };
 		353FE55D1E65CE500001292D /* Postcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Postcode.h; sourceTree = "<group>"; };
 		353FE55E1E65CE500001292D /* Postcode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Postcode.m; sourceTree = "<group>"; };
+		35ACD0101E8C183700546EA7 /* GeoserviceV2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoserviceV2.h; sourceTree = "<group>"; };
+		35ACD0111E8C183700546EA7 /* GeoserviceV2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoserviceV2.m; sourceTree = "<group>"; };
 		35D9DD541E675BDB007E0ADA /* Antenna.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Antenna.h; sourceTree = "<group>"; };
 		35D9DD551E675BDB007E0ADA /* Antenna.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Antenna.m; sourceTree = "<group>"; };
 		35D9DD571E675EC9007E0ADA /* Road.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Road.h; sourceTree = "<group>"; };
@@ -108,6 +111,8 @@
 				35D9DD551E675BDB007E0ADA /* Antenna.m */,
 				35D9DD571E675EC9007E0ADA /* Road.h */,
 				35D9DD581E675EC9007E0ADA /* Road.m */,
+				35ACD0101E8C183700546EA7 /* GeoserviceV2.h */,
+				35ACD0111E8C183700546EA7 /* GeoserviceV2.m */,
 			);
 			path = GeoService;
 			sourceTree = "<group>";
@@ -218,6 +223,7 @@
 				35E3173F1E65DB64004A8F9D /* PoliceDistrict.m in Sources */,
 				35D9DD591E675EC9007E0ADA /* Road.m in Sources */,
 				35D9DD561E675BDB007E0ADA /* Antenna.m in Sources */,
+				35ACD0121E8C183700546EA7 /* GeoserviceV2.m in Sources */,
 				353FE55F1E65CE500001292D /* Postcode.m in Sources */,
 				3504EF581E608E67005C0360 /* Municipality.m in Sources */,
 			);
